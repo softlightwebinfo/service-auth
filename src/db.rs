@@ -1,4 +1,4 @@
-// models.rs
+// db
 use diesel::{r2d2::ConnectionManager, PgConnection};
 
 // type alias to use in multiple places

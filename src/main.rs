@@ -11,7 +11,7 @@ use crate::state::app_state::AppState;
 
 mod controllers;
 mod state;
-mod models;
+mod db;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -19,7 +19,7 @@ async fn main() -> std::io::Result<()> {
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let manager = ConnectionManager::<PgConnection>::new(database_url);
-    let pool: models::Pool = r2d2::Pool::builder()
+    let pool: db::Pool = r2d2::Pool::builder()
         .build(manager)
         .expect("Failed to create pool.");
 
