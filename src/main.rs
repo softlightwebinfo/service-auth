@@ -8,7 +8,7 @@ use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use crate::controllers::index::index;
 use crate::controllers::steam::stream;
 use crate::state::app_state::AppState;
-use service_auth::routes::auth::auth_configure;
+use lib::routes::auth::auth_configure;
 
 mod controllers;
 mod state;

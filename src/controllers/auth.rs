@@ -1,9 +1,20 @@
 use actix_web::{delete, get, post, put};
 use actix_web::Responder;
+use actix_web::web::Json;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct RQAuth {
+    pub email: String,
+    pub password: String,
+}
+
 
 #[post("")]
-pub async fn auth() -> String {
-    format!("Hello {:?}!", "HOLA")
+pub async fn auth(
+    info: Json<RQAuth>
+) -> String {
+    format!("Hello {:?}!", info.email)
 }
 
 #[get("")]

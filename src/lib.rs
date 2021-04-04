@@ -7,3 +7,4 @@ pub mod models;
 pub mod routes;
 pub mod state;
 pub mod controllers;
+pub mod requests;

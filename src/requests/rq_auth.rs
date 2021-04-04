@@ -1,5 +1,7 @@
-#[derive(Deserialize, Debug)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct RQAuth {
-    email: String,
-    password: String,
+    pub email: String,
+    pub password: String,
 }
