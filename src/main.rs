@@ -8,6 +8,7 @@ use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use crate::controllers::index::index;
 use crate::controllers::steam::stream;
 use crate::state::app_state::AppState;
+use service_auth::routes::auth::auth_configure;
 
 mod controllers;
 mod state;
@@ -41,6 +42,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(middleware::Compress::default())
             .service(index)
             .service(stream)
+            .configure(auth_configure)
     })
         .keep_alive(75)
         .bind_openssl("127.0.0.1:8000", builder)?

@@ -1,6 +1,9 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Queryable)]
+use super::super::schema::*;
+
+#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
+#[table_name = "users"]
 struct User {
     id: i32,
     name: String,
