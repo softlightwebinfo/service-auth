@@ -1,20 +1,18 @@
 use actix_web::{delete, get, post, put};
 use actix_web::Responder;
-use actix_web::web::Json;
-use serde::{Deserialize, Serialize};
+use actix_web::web::{Data, Json};
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct RQAuth {
-    pub email: String,
-    pub password: String,
-}
-
+use crate::db::Pool;
+use crate::models::auth::RQLogin;
+use crate::services::account_service;
 
 #[post("")]
 pub async fn auth(
-    info: Json<RQAuth>
+    body: Json<RQLogin>,
+    pool: Data<Pool>,
 ) -> String {
-    format!("Hello {:?}!", info.email)
+    match account_service::login(body.0, &pool) { _ => {} }
+    format!("Hello {:?}!", "HOLA")
 }
 
 #[get("")]

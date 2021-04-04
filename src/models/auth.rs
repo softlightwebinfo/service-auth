@@ -2,11 +2,17 @@ use serde::{Deserialize, Serialize};
 
 use super::super::schema::*;
 
-#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
+#[derive(Identifiable, Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[table_name = "users"]
-struct User {
+pub struct User {
     id: i32,
     name: String,
     email: String,
     password: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RQLogin {
+    pub username: String,
+    pub password: String,
 }

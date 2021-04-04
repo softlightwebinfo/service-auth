@@ -20,6 +20,8 @@ pub mod routes;
 pub mod state;
 pub mod controllers;
 pub mod requests;
+pub mod repository;
+pub mod services;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
