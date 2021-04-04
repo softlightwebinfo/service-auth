@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate diesel;
+
 use actix_web::{App, HttpServer, middleware};
 use actix_web::middleware::Logger;
 use diesel::PgConnection;
@@ -8,11 +11,15 @@ use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use crate::controllers::index::index;
 use crate::controllers::steam::stream;
 use crate::state::app_state::AppState;
-use lib::routes::auth::auth_configure;
+use crate::routes::auth::auth_configure;
 
-mod controllers;
-mod state;
-mod db;
+pub mod schema;
+pub mod db;
+pub mod models;
+pub mod routes;
+pub mod state;
+pub mod controllers;
+pub mod requests;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
