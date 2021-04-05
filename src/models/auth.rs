@@ -5,14 +5,31 @@ use super::super::schema::*;
 #[derive(Identifiable, Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[table_name = "users"]
 pub struct User {
-    id: i32,
-    name: String,
-    email: String,
-    password: String,
+    pub id: i32,
+    pub name: String,
+    pub email: String,
+    #[serde(skip)]
+    pub password: String,
+    #[serde(skip)]
+    pub login_session: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RQLogin {
     pub username: String,
+    pub password: String,
+}
+
+#[derive(Insertable)]
+#[table_name = "users"]
+pub struct LoginInfoDTO {
+    pub email: String,
+    pub login_session: String,
+}
+
+#[derive(Insertable, Serialize, Deserialize)]
+#[table_name = "users"]
+pub struct UserDTO {
+    pub email: String,
     pub password: String,
 }
