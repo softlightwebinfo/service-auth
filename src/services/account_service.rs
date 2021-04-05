@@ -4,7 +4,7 @@ use actix_web::web::Data;
 
 use crate::constants;
 use crate::db::Pool;
-use crate::models::auth::{RQLogin, User};
+use crate::models::auth::{RQLogin, User, UserDTO};
 use crate::responses::token_body::TokenBodyResponse;
 use crate::services::{user_token::UserToken};
 use crate::services::service_error::ServiceError;
@@ -61,4 +61,22 @@ pub fn get_user_by_id(authen_header: &HeaderValue, pool: &Data<Pool>) -> Result<
         }
     }
     Err(constants::MESSAGE_INVALID_TOKEN.to_string())
+}
+
+pub fn signup(user: UserDTO, pool: &Data<Pool>) -> Result<TokenBodyResponse, ServiceError> {
+    match User::signup(user, &pool.get().unwrap()) {
+        Ok(logged_user) => {
+            match serde_json::from_value(json!({ "token": UserToken::generate_token(&logged_user), "token_type": "bearer" })) {
+                Ok(token_res) => {
+                    if logged_user.login_session.is_empty() {
+                        Err(ServiceError::new(StatusCode::UNAUTHORIZED, constants::MESSAGE_LOGIN_FAILED.to_string()))
+                    } else {
+                        Ok(token_res)
+                    }
+                }
+                Err(_) => Err(ServiceError::new(StatusCode::INTERNAL_SERVER_ERROR, constants::MESSAGE_INTERNAL_SERVER_ERROR.to_string()))
+            }
+        }
+        Err(message) => Err(ServiceError::new(StatusCode::BAD_REQUEST, message))
+    }
 }

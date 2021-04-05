@@ -36,21 +36,38 @@ impl User {
         }
         None
     }
-    pub fn signup(user: UserDTO, conn: &Connection) -> Result<String, String> {
+    pub fn signup(user: UserDTO, conn: &Connection) -> Result<LoginInfoDTO, String> {
         if Self::find_user_by_username(&user.email, conn).is_err() {
             let hashed_pwd = hash(&user.password, DEFAULT_COST).unwrap();
             let user = UserDTO {
                 password: hashed_pwd,
                 ..user
             };
-            diesel::insert_into(users).values(&user).execute(conn);
-            Ok(constants::MESSAGE_SIGNUP_SUCCESS.to_string())
-        } else {
-            Err(format!("User '{}' is already registered", &user.email))
+            diesel::insert_into(users)
+                .values(&user)
+                .execute(conn);
+
+            if let Some(login_history) = LoginHistory::create(&user.email, &conn) {
+                if LoginHistory::save_login_history(login_history, &conn).is_err() {
+                    return Err(format!("User '{}' error", &user.email));
+                }
+                let login_session_str = User::generate_login_session();
+                if User::update_login_session_to_db(
+                    &user.email,
+                    &login_session_str,
+                    &conn,
+                ) {
+                    return Ok(LoginInfoDTO {
+                        email: user.email.to_string(),
+                        login_session: login_session_str.to_string(),
+                    })
+                }
+            }
+            return Err(constants::MESSAGE_LOGIN_FAILED.to_string());
         }
+        Err(format!("User '{}' is already registered", &user.email))
     }
     pub fn logout(user_id: i32, conn: &Connection) {
-        println!("user_id -> {}", user_id);
         if let Ok(user) = users.find(user_id).get_result::<User>(conn) {
             Self::update_login_session_to_db(&user.email, "", conn);
         }

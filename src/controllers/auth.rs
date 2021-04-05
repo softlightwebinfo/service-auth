@@ -4,11 +4,11 @@ use actix_web::web::{Data, Json};
 
 use crate::constants;
 use crate::db::Pool;
-use crate::models::auth::{RQLogin, User};
+use crate::models::auth::{RQLogin, User, UserDTO};
 use crate::responses::response::ResponseBody;
 use crate::services::account_service;
 
-#[post("")]
+#[post("login")]
 pub async fn auth(
     body: Json<RQLogin>,
     pool: Data<Pool>,
@@ -47,10 +47,14 @@ pub async fn get_users() -> impl Responder {
 }
 
 
-#[post("/")]
-pub async fn add_user() -> impl Responder {
-    format!("hello from add user")
+#[post("/signup")]
+pub async fn signup(user_dto: Json<UserDTO>, pool: Data<Pool>) -> Result<HttpResponse> {
+    match account_service::signup(user_dto.0, &pool) {
+        Ok(token_res) => Ok(HttpResponse::Ok().json(ResponseBody::new(constants::MESSAGE_SIGNUP_SUCCESS, token_res))),
+        Err(err) => Ok(err.response()),
+    }
 }
+
 
 #[delete("/")]
 pub async fn delete_user() -> impl Responder {
