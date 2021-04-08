@@ -1,11 +1,28 @@
 version: "3.7"
 services:
-  postgres:
+  service-auth-db:
     image: postgres:12-alpine
     restart: always
     environment:
       POSTGRES_PASSWORD: actix
       POSTGRES_USER: actix
-      POSTGRES_DB: actix
+      POSTGRES_DB: auth
     ports:
       - 5460:5432
+  service-auth-restful:
+    container_name: service-auth-restful
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "9000:9000"
+    depends_on:
+      - service-auth-db
+    links:
+      - service-auth-db
+
+networks:
+  default:
+    external:
+      name: service-auth

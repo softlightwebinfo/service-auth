@@ -18,6 +18,9 @@ release:
 run:
 	$(CARGO) run
 
+start:
+	$(CARGO) run --release
+
 dev:
 	$(CARGO)  watch -x run
 

@@ -48,6 +48,8 @@ async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let port = std::env::var("PORT").expect("PORT must be set");
+    let host = std::env::var("HOST").expect("HOST must be set");
     let manager = ConnectionManager::<PgConnection>::new(database_url);
     let pool: db::Pool = r2d2::Pool::builder()
         .build(manager)
@@ -74,7 +76,7 @@ async fn main() -> std::io::Result<()> {
             .configure(auth_configure)
     })
         .keep_alive(75)
-        .bind_openssl("127.0.0.1:8000", builder)?
+        .bind_openssl(format!("{}:{}", host, port), builder)?
         .run()
         .await
 }
