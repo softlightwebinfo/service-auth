@@ -5,8 +5,10 @@ use actix_web::web::{Data, Json};
 use crate::constants;
 use crate::db::Pool;
 use crate::models::auth::{RQLogin, User, UserDTO};
+use crate::requests::rq_auth::RQPutUser;
 use crate::responses::response::ResponseBody;
 use crate::services::account_service;
+use crate::services::service_error::ServiceError;
 
 #[post("login")]
 pub async fn auth(
@@ -61,7 +63,33 @@ pub async fn delete_user() -> impl Responder {
     format!("hello from delete user")
 }
 
-#[put("/")]
-pub async fn put_user() -> impl Responder {
-    format!("hello from delete user")
+#[put("")]
+pub async fn put_user(
+    body: Json<RQPutUser>,
+    pool: Data<Pool>,
+    req: HttpRequest,
+) -> Result<HttpResponse> {
+    if let Some(authen_header) = req.headers().get(constants::AUTHORIZATION) {
+        match account_service::get_user_by_id(authen_header, &pool) {
+            Ok(user) => {
+                match account_service::put_user(user.id, body.0, &pool) {
+                    true => {
+                        let result = account_service::get_user_by_id(authen_header, &pool);
+                        Ok(
+                            HttpResponse::Ok().json(
+                                ResponseBody::new(
+                                    constants::MESSAGE_SUCCESS_PUT_USER,
+                                    result.ok(),
+                                )
+                            )
+                        )
+                    }
+                    false => { Ok(HttpResponse::BadRequest().json(ResponseBody::new(constants::MESSAGE_ERROR_PUT_USER, constants::EMPTY))) }
+                }
+            }
+            Err(_) => { Ok(HttpResponse::BadRequest().json(ResponseBody::new(constants::MESSAGE_TOKEN_MISSING, constants::EMPTY))) }
+        }
+    } else {
+        Ok(HttpResponse::BadRequest().json(ResponseBody::new(constants::MESSAGE_TOKEN_MISSING, constants::EMPTY)))
+    }
 }

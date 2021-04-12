@@ -8,7 +8,6 @@ extern crate dotenv;
 extern crate env_logger;
 extern crate futures;
 extern crate jsonwebtoken;
-#[macro_use]
 extern crate log;
 extern crate serde;
 #[macro_use]
@@ -25,8 +24,10 @@ use env_logger::Env;
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 
 use crate::controllers::index::index;
+use crate::controllers::serving_static::serving_static;
 use crate::controllers::steam::stream;
 use crate::routes::auth::auth_configure;
+use crate::routes::web::web_configure;
 use crate::state::app_state::AppState;
 
 pub mod schema;
@@ -46,7 +47,6 @@ pub mod middleware;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
-
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let port = std::env::var("PORT").expect("PORT must be set");
     let host = std::env::var("HOST").expect("HOST must be set");
@@ -71,12 +71,14 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
             .wrap(mid::Compress::default())
+            .service(serving_static)
             .service(index)
             .service(stream)
+            .configure(web_configure)
             .configure(auth_configure)
     })
         .keep_alive(75)
-        .bind_openssl(format!("{}:{}", host, port), builder)?
+        .bind(format!("{}:{}", host, port))?
         .run()
         .await
 }

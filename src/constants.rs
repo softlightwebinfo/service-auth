@@ -14,9 +14,12 @@ pub const MESSAGE_PROCESS_TOKEN_ERROR: &str = "Error while processing token";
 pub const MESSAGE_INVALID_TOKEN: &str = "Invalid token, please login again";
 pub const MESSAGE_INTERNAL_SERVER_ERROR: &str = "Internal Server Error";
 pub const MESSAGE_GET_USER_SUCCESS: &str = "You have successfully obtained the user";
+pub const MESSAGE_ERROR_NOT_FOUND: &str = "Webs not founds";
+pub const MESSAGE_SUCCESS_ALL_WEBS: &str = "Successfully get all webs";
+pub const MESSAGE_SUCCESS_PUT_USER: &str = "Successfully update user";
+pub const MESSAGE_ERROR_PUT_USER: &str = "Error update user";
 // Bad request messages
 pub const MESSAGE_TOKEN_MISSING: &str = "Token is missing";
-
 // Headers
 pub const AUTHORIZATION: &str = "Authorization";
 

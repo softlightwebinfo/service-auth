@@ -6,7 +6,8 @@ use crate::constants;
 use crate::db::Connection;
 use crate::models::auth::{LoginInfoDTO, RQLogin, User, UserDTO};
 use crate::models::login_history::LoginHistory;
-use crate::schema::users::dsl::{email, login_session, users};
+use crate::requests::rq_auth::RQPutUser;
+use crate::schema::users::dsl::{email, login_session, name, users};
 use crate::services::user_token::UserToken;
 
 impl User {
@@ -29,6 +30,7 @@ impl User {
                         return Some(LoginInfoDTO {
                             email: user_to_verify.email,
                             login_session: login_session_str,
+                            name: user_to_verify.name,
                         });
                     }
                 }
@@ -60,7 +62,8 @@ impl User {
                     return Ok(LoginInfoDTO {
                         email: user.email.to_string(),
                         login_session: login_session_str.to_string(),
-                    })
+                        name: user.name.to_string(),
+                    });
                 }
             }
             return Err(constants::MESSAGE_LOGIN_FAILED.to_string());
@@ -98,5 +101,15 @@ impl User {
         } else {
             false
         }
+    }
+    pub fn put_user(
+        id_user: i32,
+        user: RQPutUser,
+        conn: &Connection,
+    ) -> bool {
+        diesel::update(users.find(id_user))
+            .set((name.eq(user.name.to_string()), email.eq(user.username.to_string())))
+            .execute(conn)
+            .is_ok()
     }
 }

@@ -24,10 +24,20 @@ table! {
     }
 }
 
+table! {
+    webs (web) {
+        web -> Varchar,
+        token -> Varchar,
+        url -> Varchar,
+        image -> Nullable<Varchar>,
+    }
+}
+
 joinable!(login_history -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
     invitations,
     login_history,
     users,
+    webs,
 );

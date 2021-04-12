@@ -20,10 +20,11 @@ pub struct RQLogin {
     pub password: String,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Serialize, Deserialize)]
 #[table_name = "users"]
 pub struct LoginInfoDTO {
     pub email: String,
+    pub name: String,
     pub login_session: String,
 }
 

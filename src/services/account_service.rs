@@ -5,6 +5,7 @@ use actix_web::web::Data;
 use crate::constants;
 use crate::db::Pool;
 use crate::models::auth::{RQLogin, User, UserDTO};
+use crate::requests::rq_auth::RQPutUser;
 use crate::responses::token_body::TokenBodyResponse;
 use crate::services::{user_token::UserToken};
 use crate::services::service_error::ServiceError;
@@ -14,7 +15,7 @@ pub fn login(login: RQLogin, pool: &web::Data<Pool>) -> Result<TokenBodyResponse
     let connect = &pool.get().unwrap();
     match User::login(login, &connect) {
         Some(logged_user) => {
-            match serde_json::from_value(json!({ "token": UserToken::generate_token(&logged_user), "token_type": "bearer" })) {
+            match serde_json::from_value(json!({ "token": UserToken::generate_token(&logged_user), "token_type": "bearer", "user": logged_user })) {
                 Ok(token_res) => {
                     if logged_user.login_session.is_empty() {
                         Err(ServiceError::new(StatusCode::UNAUTHORIZED, constants::MESSAGE_LOGIN_FAILED.to_string()))
@@ -79,4 +80,8 @@ pub fn signup(user: UserDTO, pool: &Data<Pool>) -> Result<TokenBodyResponse, Ser
         }
         Err(message) => Err(ServiceError::new(StatusCode::BAD_REQUEST, message))
     }
+}
+
+pub fn put_user(id_user: i32, user: RQPutUser, pool: &Data<Pool>) -> bool {
+    User::put_user(id_user, user, &pool.get().unwrap())
 }
