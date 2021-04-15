@@ -1,4 +1,4 @@
-use chrono::{NaiveDateTime};
+use chrono::NaiveDateTime;
 
 use crate::{
     models::auth::User
@@ -15,7 +15,7 @@ pub struct LoginHistory {
     pub login_timestamp: NaiveDateTime,
 }
 
-#[derive(Insertable)]
+#[derive(Debug, Insertable)]
 #[table_name = "login_history"]
 pub struct LoginHistoryInsertableDTO {
     pub user_id: i32,

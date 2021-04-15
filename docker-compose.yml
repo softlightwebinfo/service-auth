@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: actix
       POSTGRES_USER: actix
       POSTGRES_DB: auth
-    volumes: ["./postgres-data:/var/lib/postgresql"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
     ports:
       - 5460:5432
   service-auth-restful:
@@ -27,3 +27,6 @@ networks:
   default:
     external:
       name: service-auth
+
+volumes:
+  pgdata:

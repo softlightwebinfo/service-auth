@@ -67,7 +67,7 @@ pub fn get_user_by_id(authen_header: &HeaderValue, pool: &Data<Pool>) -> Result<
 pub fn signup(user: UserDTO, pool: &Data<Pool>) -> Result<TokenBodyResponse, ServiceError> {
     match User::signup(user, &pool.get().unwrap()) {
         Ok(logged_user) => {
-            match serde_json::from_value(json!({ "token": UserToken::generate_token(&logged_user), "token_type": "bearer" })) {
+            match serde_json::from_value(json!({ "token": UserToken::generate_token(&logged_user), "token_type": "bearer", "user": &logged_user })) {
                 Ok(token_res) => {
                     if logged_user.login_session.is_empty() {
                         Err(ServiceError::new(StatusCode::UNAUTHORIZED, constants::MESSAGE_LOGIN_FAILED.to_string()))
