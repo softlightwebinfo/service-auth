@@ -8,7 +8,6 @@ use crate::models::auth::{RQLogin, User, UserDTO};
 use crate::requests::rq_auth::RQPutUser;
 use crate::responses::response::ResponseBody;
 use crate::services::account_service;
-use crate::services::service_error::ServiceError;
 
 #[post("login")]
 pub async fn auth(

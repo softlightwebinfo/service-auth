@@ -18,6 +18,8 @@ pub const MESSAGE_ERROR_NOT_FOUND: &str = "Webs not founds";
 pub const MESSAGE_SUCCESS_ALL_WEBS: &str = "Successfully get all webs";
 pub const MESSAGE_SUCCESS_PUT_USER: &str = "Successfully update user";
 pub const MESSAGE_ERROR_PUT_USER: &str = "Error update user";
+pub const MESSAGE_SUCCESS_POST_WEBS: &str = "Successfully create web";
+pub const MESSAGE_ERROR_POST_WEBS: &str = "Error create web";
 // Bad request messages
 pub const MESSAGE_TOKEN_MISSING: &str = "Token is missing";
 // Headers
