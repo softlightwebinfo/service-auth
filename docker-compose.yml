@@ -17,7 +17,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     ports:
-      - "9000:9000"
+      - "4211:4211"
     depends_on:
       - service-auth-db
     links:
